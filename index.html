@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>TakeYaPill | Medication Reminder App</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <nav class="navbar">
+    <h1>TakeYaPill - Medication Reminder</h1>
+    <p>An app that takes care of you!</p>
+  </nav>
+    <header class="flex-box">
+      <section class="input-form container">
+        <h2>Add new Medicine</h2>
+        <form
+          onsubmit="event.preventDefault();onFormSubmit();"
+          autocomplete="off"
+        >
+          <div>
+            <label>Medicine Name*</label
+            ><label class="validation-error hide" id="medNameValidationError"
+              >This field is required.</label
+            >
+            <input type="text" name="medName" id="medName" />
+          </div>
+          <div>
+            <label>Description</label>
+            <input type="text" name="medDesc" id="medDesc" />
+          </div>
+          <div>
+            <label>When to take?</label>
+            <input type="time" name="medTime" id="medTime" />
+          </div>
+          <div>
+            <label>Expiry Date</label>
+            <input
+              type="text"
+              name="medDate"
+              id="medDate"
+              placeholder=" [yyyy-mm-dd]"
+            />
+          </div>
+          <div class="form-action-buttons">
+            <input type="submit" value="ADD MEDICINE" id="alarm" />
+          </div>
+        </form>
+      </section>
+
+      <div class="container">
+        <h2>List of your Medicines</h2>
+        <table>
+          <tr>
+            <td>
+              <table class="list" id="medList">
+                <thead>
+                  <tr>
+                    <th>Medicine</th>
+                    <th>Description</th>
+                    <th>Expiry Date</th>
+                    <th>Time of Consumption</th>
+                    <th></th>
+                  </tr>
+                </thead>
+                <tbody></tbody>
+              </table>
+            </td>
+          </tr>
+        </table>
+      </div>
+    </header>
+
+    <script src="script.js"></script>
+    <script
+      src="https://code.jquery.com/jquery-3.6.0.min.js"
+      integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4="
+      crossorigin="anonymous"
+    ></script>
+    <script src="push.min.js"></script>
+    <script src="serviceWorker.min.js"></script>
+  </body>
+</html>

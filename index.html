@@ -3,81 +3,207 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>TakeYaPill | Medication Reminder App</title>
-  <link rel="stylesheet" href="styles.css">
+  <title>Health Tracker</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #f4f4f4;
+      margin: 0;
+      padding: 0;
+    }
+    .navbar {
+      background: #2c3e50;
+      color: #fff;
+      padding: 15px;
+      text-align: center;
+    }
+    .container {
+      background: #fff;
+      margin: 20px auto;
+      padding: 20px;
+      border-radius: 10px;
+      box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+      width: 90%;
+      max-width: 600px;
+    }
+    h2 { text-align: center; }
+    input, select {
+      width: 100%;
+      padding: 10px;
+      margin: 5px 0;
+      border: 1px solid #ccc;
+      border-radius: 5px;
+    }
+    .form-action-buttons input {
+      background: #2c3e50;
+      color: white;
+      border: none;
+      padding: 10px;
+      cursor: pointer;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 20px;
+    }
+    th, td {
+      border: 1px solid #ddd;
+      padding: 10px;
+      text-align: center;
+    }
+    th { background: #2c3e50; color: white; }
+    button {
+      background: red;
+      color: white;
+      border: none;
+      padding: 5px;
+      cursor: pointer;
+    }
+  </style>
 </head>
 <body>
+
   <nav class="navbar">
-    <h1>TakeYaPill - Medication Reminder</h1>
-    <p>An app that takes care of you!</p>
+    <h1>TakeYaPill - Health Tracker</h1>
+    <p>Your personal health companion!</p>
   </nav>
-    <header class="flex-box">
-      <section class="input-form container">
-        <h2>Add new Medicine</h2>
-        <form
-          onsubmit="event.preventDefault();onFormSubmit();"
-          autocomplete="off"
-        >
-          <div>
-            <label>Medicine Name*</label
-            ><label class="validation-error hide" id="medNameValidationError"
-              >This field is required.</label
-            >
-            <input type="text" name="medName" id="medName" />
-          </div>
-          <div>
-            <label>Description</label>
-            <input type="text" name="medDesc" id="medDesc" />
-          </div>
-          <div>
-            <label>When to take?</label>
-            <input type="time" name="medTime" id="medTime" />
-          </div>
-          <div>
-            <label>Expiry Date</label>
-            <input
-              type="text"
-              name="medDate"
-              id="medDate"
-              placeholder=" [yyyy-mm-dd]"
-            />
-          </div>
-          <div class="form-action-buttons">
-            <input type="submit" value="ADD MEDICINE" id="alarm" />
-          </div>
-        </form>
-      </section>
 
-      <div class="container">
-        <h2>List of your Medicines</h2>
-        <table>
-          <tr>
-            <td>
-              <table class="list" id="medList">
-                <thead>
-                  <tr>
-                    <th>Medicine</th>
-                    <th>Description</th>
-                    <th>Expiry Date</th>
-                    <th>Time of Consumption</th>
-                    <th></th>
-                  </tr>
-                </thead>
-                <tbody></tbody>
-              </table>
-            </td>
-          </tr>
-        </table>
+  <!-- Medicine Form -->
+  <div class="container">
+    <h2>Add New Medicine</h2>
+    <form onsubmit="event.preventDefault(); onMedicineSubmit();">
+      <label>Medicine Name*</label>
+      <input type="text" id="medName" onblur="fetchMedicineDescription()" required />
+      <label>Description</label>
+      <input type="text" id="medDesc" />
+      <label>When to take?</label>
+      <input type="time" id="medTime" />
+      <label>Expiry Date</label>
+      <input type="date" id="medDate" />
+      <div class="form-action-buttons">
+        <input type="submit" value="ADD MEDICINE" />
       </div>
-    </header>
+    </form>
+  </div>
 
-    <script src="script.js"></script>
-    <script
-      src="https://code.jquery.com/jquery-3.6.0.min.js"
-      integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4="
-      crossorigin="anonymous"
-    ></script>
-    <script src="push.min.js"></script>
-    <script src="serviceWorker.min.js"></script>
-  </body>
+  <!-- Health Tracking Form -->
+  <div class="container">
+    <h2>Track Your Health</h2>
+    <form onsubmit="event.preventDefault(); onHealthSubmit();">
+      <label>Sleep (Hours)</label>
+      <input type="number" id="sleepHours" min="0" max="24" />
+      <label>Water Intake (Litres)</label>
+      <input type="number" id="waterIntake" min="0" max="10" step="0.1" />
+      <label>Exercise Done</label>
+      <select id="exercise">
+        <option value="Yes">Yes</option>
+        <option value="No">No</option>
+      </select>
+      <label>Medical Appointments</label>
+      <input type="date" id="appointmentDate" />
+      <div class="form-action-buttons">
+        <input type="submit" value="ADD HEALTH DATA" />
+      </div>
+    </form>
+  </div>
+
+  <!-- Medicine List -->
+  <div class="container">
+    <h2>List of Your Medicines</h2>
+    <table>
+      <thead>
+        <tr>
+          <th>Medicine</th>
+          <th>Description</th>
+          <th>Expiry Date</th>
+          <th>Time</th>
+          <th>Action</th>
+        </tr>
+      </thead>
+      <tbody id="medList"></tbody>
+    </table>
+  </div>
+
+  <!-- Health Data List -->
+  <div class="container">
+    <h2>Your Health Tracking</h2>
+    <table>
+      <thead>
+        <tr>
+          <th>Sleep (Hours)</th>
+          <th>Water (L)</th>
+          <th>Exercise</th>
+          <th>Appointments</th>
+          <th>Action</th>
+        </tr>
+      </thead>
+      <tbody id="healthList"></tbody>
+    </table>
+  </div>
+
+  <script>
+    // Medicine Form Submission
+    function onMedicineSubmit() {
+      let medName = document.getElementById("medName").value;
+      let medDesc = document.getElementById("medDesc").value;
+      let medTime = document.getElementById("medTime").value;
+      let medDate = document.getElementById("medDate").value;
+
+      if (medName.trim() === "") return alert("Medicine name is required!");
+
+      let table = document.getElementById("medList");
+      let row = table.insertRow();
+      row.innerHTML = `<td>${medName}</td>
+                       <td>${medDesc}</td>
+                       <td>${medDate}</td>
+                       <td>${medTime}</td>
+                       <td><button onclick="deleteRow(this)">Delete</button></td>`;
+
+      document.getElementById("medName").value = "";
+      document.getElementById("medDesc").value = "";
+      document.getElementById("medTime").value = "";
+      document.getElementById("medDate").value = "";
+    }
+
+    // Health Form Submission
+    function onHealthSubmit() {
+      let sleepHours = document.getElementById("sleepHours").value;
+      let waterIntake = document.getElementById("waterIntake").value;
+      let exercise = document.getElementById("exercise").value;
+      let appointmentDate = document.getElementById("appointmentDate").value;
+
+      let table = document.getElementById("healthList");
+      let row = table.insertRow();
+      row.innerHTML = `<td>${sleepHours}</td>
+                       <td>${waterIntake}</td>
+                       <td>${exercise}</td>
+                       <td>${appointmentDate}</td>
+                       <td><button onclick="deleteRow(this)">Delete</button></td>`;
+
+      document.getElementById("sleepHours").value = "";
+      document.getElementById("waterIntake").value = "";
+      document.getElementById("appointmentDate").value = "";
+    }
+
+    // Delete Row
+    function deleteRow(button) {
+      let row = button.parentNode.parentNode;
+      row.parentNode.removeChild(row);
+    }
+
+    // Fetch Medicine Description (Placeholder API)
+    function fetchMedicineDescription() {
+      let medName = document.getElementById("medName").value;
+      if (medName.trim() !== "") {
+        fetch(https://api.example.com/medicine?name=${medName})
+          .then(response => response.json())
+          .then(data => {
+            document.getElementById("medDesc").value = data.description || "No description found.";
+          })
+          .catch(error => console.log("Error fetching description:", error));
+      }
+    }
+  </script>
+
+</body>
 </html>
